@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
 from .models import Hood, Location, Post, User
+from .forms import  NeighbourHoodForm
 
 # Create your views here.
 def loginPage(request):
@@ -76,3 +77,17 @@ def homepage(request):
         'posts':posts
     }
     return render(request, 'home.html', context)
+
+def create_hood(request):
+    """View functionality for creating a new neighbourhood"""
+    if request.method == 'POST':
+        form = NeighbourHoodForm(request.POST, request.FILES)
+        if form.is_valid():
+            hood = form.save(commit=False)
+            hood.admin = request.user.profile
+            hood.save()
+            return redirect('hood')   
+
+    else:
+        form = NeighbourHoodForm()
+    return render(request, 'newhood.html', {'form': form})
