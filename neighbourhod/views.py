@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
-from .models import Hood, Location, Post, User,NeighbourHood
-from .forms import  NeighbourHoodForm,PostForm,UpdateProfileForm
+from .models import Hood, Location, Post, User,NeighbourHood,Business
+from .forms import  NeighbourHoodForm,PostForm,UpdateProfileForm,BusinessForm
 
 # Create your views here.
 def loginPage(request):
@@ -136,3 +136,43 @@ def leave_hood(request, id):
     request.user.profile.neighbourhood = None
     request.user.profile.save()
     return redirect('hood')   
+
+def search_business(request):
+    """Functionality for searching for a bussiness by a specific name"""
+    if request.method == 'GET':
+        name = request.GET.get("title")
+        results = Business.objects.filter(name__icontains=name).all()
+        print(results)
+        message = f'name'
+        params = {
+            'results': results,
+            'message': message
+        }
+        return render(request, 'results.html', params)
+    else:
+        message = "You haven't searched for any image category"
+    return render(request, "search.html")         
+
+def single_hood(request, hood_id):
+    """Functionality for getting a single hood"""
+    hood = NeighbourHood.objects.get(id=hood_id)
+    business = Business.objects.filter(neighbourhood=hood)
+    posts = Post.objects.filter(hood=hood)
+    posts = posts[::-1]
+    if request.method == 'POST':
+        form = BusinessForm(request.POST)
+        if form.is_valid():
+            b_form = form.save(commit=False)
+            b_form.neighbourhood = hood
+            b_form.user = request.user.profile
+            b_form.save()
+            return redirect('single-hood', hood.id)
+    else:
+        form = BusinessForm()
+    params = {
+        'hood': hood,
+        'business': business,
+        'form': form,
+        'posts': posts
+    }
+    return render(request, 'hood.html', params)     
