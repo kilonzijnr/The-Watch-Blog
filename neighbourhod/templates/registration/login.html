@@ -1,0 +1,54 @@
+{% extends 'base.html' %} 
+
+{% load django_bootstrap5 %}
+
+
+{% block content %}
+{% if page == 'login' %}
+
+<style>
+  .login{
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    position: relative;
+    
+  }
+</style>
+
+    <div class="login">
+        <h3>Sign In</h3>
+        <form action="" method='post'>
+            {% csrf_token %} 
+            <div class="form-group">
+                <label>username:</label>
+                <input type="text" name='username' placeholder="Enter username">
+            </div>
+
+            <div class="form-group">
+                <label>username:</label>
+                <input type="password" name='password' placeholder="Enter password">
+            </div>
+            <input type="submit" value="login" class="login-btn">
+        </form>
+        <p>Havent signed up yet?</p>
+        <a href="{% url 'register' %}">sign up</a>
+    </div>
+
+{% else %}
+    
+    <div class="form-wrapper my-3">
+        <h3>Sign-UP</h3>
+        <form action="" method='post'>
+            {% csrf_token %}  
+            {% bootstrap_form form %}        
+            <!-- {{ form.as_p }} -->
+            <input type="submit" value="register" class="login-btn">
+        </form>
+        <p>Already signed up?</p>
+        <a href="{% url 'login' %}">login</a>
+    </div>
+{% endif %}
+
+{% endblock %}
