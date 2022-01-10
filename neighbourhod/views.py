@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
+from .models import Hood, Location, Post, User
 
 # Create your views here.
 def loginPage(request):
@@ -59,3 +60,19 @@ def registerUser(request):
     }
 
     return render(request, 'registration/login.html', context)
+
+def homepage(request):
+    pst = request.GET.get('pst') if request.GET.get('pst') != None else ''
+
+    hoods = Hood.objects.filter(pst(location__name__icontains=pst) | pst(name__icontains=pst))
+    locations = Location.objects.all()
+    hood_count = hoods.count()
+    posts = Post.objects.filter(pst(hood__location__name__icontains=pst))
+
+    context = {
+        'hoods':hoods,
+        'locations':locations,
+        'hood_count':hood_count, 
+        'posts':posts
+    }
+    return render(request, 'home.html', context)
