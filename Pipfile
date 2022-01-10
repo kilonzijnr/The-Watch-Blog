@@ -9,6 +9,10 @@ django-bootstrap5 = "*"
 psycopg2 = "*"
 django-crispy-forms = "*"
 pillow = "*"
+cloudinary = "*"
+django-decouple = "*"
+django-heroku = "*"
+gunicorn = "*"
 
 [dev-packages]
 
