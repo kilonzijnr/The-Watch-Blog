@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
-from .models import Hood, Location, Post, User,NeighbourHood,Business,Profile
+from .models import   Post, User,NeighbourHood,Business,Profile
 from .forms import  NeighbourHoodForm,PostForm,UpdateProfileForm,BusinessForm
 
 # Create your views here.
@@ -65,14 +65,12 @@ def registerUser(request):
 def homepage(request):
     pst = request.GET.get('pst') if request.GET.get('pst') != None else ''
 
-    hoods = Hood.objects.filter(pst(location__name__icontains=pst) | pst(name__icontains=pst))
-    locations = Location.objects.all()
+    hoods = NeighbourHood.objects.filter(pst(location__name__icontains=pst) | pst(name__icontains=pst))
     hood_count = hoods.count()
     posts = Post.objects.filter(pst(hood__location__name__icontains=pst))
 
     context = {
         'hoods':hoods,
-        'locations':locations,
         'hood_count':hood_count, 
         'posts':posts
     }
@@ -122,6 +120,15 @@ def edit_profile(request, username):
     else:
         form = UpdateProfileForm(instance=request.user.profile)
     return render(request, 'profile_update.html', {'form': form})
+
+def hoods(request):
+    """View Functionality for getting all hoods"""
+    all_hoods = NeighbourHood.objects.all()
+    all_hoods = all_hoods[::-1]
+    params = {
+        'all_hoods': all_hoods,
+    }
+    return render(request, 'all_hoods.html', params)
 
 def join_hood(request, id):
     """View functionality for joining a new hood"""
