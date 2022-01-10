@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django_bootstrap5',
-    'neighbourhood',
+    'neighbourhod',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
