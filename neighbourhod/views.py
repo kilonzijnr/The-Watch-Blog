@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
-from .models import Hood, Location, Post, User
-from .forms import  NeighbourHoodForm
+from .models import Hood, Location, Post, User,NeighbourHood
+from .forms import  NeighbourHoodForm,PostForm
 
 # Create your views here.
 def loginPage(request):
@@ -91,3 +91,18 @@ def create_hood(request):
     else:
         form = NeighbourHoodForm()
     return render(request, 'newhood.html', {'form': form})
+
+def create_post(request, hood_id):
+    """View functionality for creating a news post"""
+    hood = NeighbourHood.objects.get(id=hood_id)
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.hood = hood
+            post.user = request.user.profile
+            post.save()
+            return redirect('single-hood', hood.id)
+    else:
+        form = PostForm()
+    return render(request, 'post.html', {'form': form})
