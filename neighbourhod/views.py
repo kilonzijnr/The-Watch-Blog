@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
 from .models import Hood, Location, Post, User,NeighbourHood
-from .forms import  NeighbourHoodForm,PostForm
+from .forms import  NeighbourHoodForm,PostForm,UpdateProfileForm
 
 # Create your views here.
 def loginPage(request):
@@ -106,3 +106,19 @@ def create_post(request, hood_id):
     else:
         form = PostForm()
     return render(request, 'post.html', {'form': form})
+
+def profile(request, username):
+    """View functionality for user profile"""
+    return render(request, 'profile.html')   
+
+def edit_profile(request, username):
+    """View functionality for editing user profile"""
+    user = User.objects.get(username=username)
+    if request.method == 'POST':
+        form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', user.username)
+    else:
+        form = UpdateProfileForm(instance=request.user.profile)
+    return render(request, 'profile_update.html', {'form': form}) 
