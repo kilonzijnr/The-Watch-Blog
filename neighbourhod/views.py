@@ -129,3 +129,10 @@ def join_hood(request, id):
     request.user.profile.neighbourhood = neighbourhood
     request.user.profile.save()
     return redirect('hood')
+
+def leave_hood(request, id):
+    """Functionality for exiting a hood you had joined"""
+    hood = get_object_or_404(NeighbourHood, id=id)
+    request.user.profile.neighbourhood = None
+    request.user.profile.save()
+    return redirect('hood')   
