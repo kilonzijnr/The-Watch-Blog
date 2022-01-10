@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
-from .models import Hood, Location, Post, User,NeighbourHood,Business
+from .models import Hood, Location, Post, User,NeighbourHood,Business,Profile
 from .forms import  NeighbourHoodForm,PostForm,UpdateProfileForm,BusinessForm
 
 # Create your views here.
@@ -176,3 +176,9 @@ def single_hood(request, hood_id):
         'posts': posts
     }
     return render(request, 'hood.html', params)     
+
+def hood_members(request, hood_id):
+    """Function for getting all hood members"""
+    hood = NeighbourHood.objects.get(id=hood_id)
+    members = Profile.objects.filter(neighbourhood=hood)
+    return render(request, 'members.html', {'members': members}) 
