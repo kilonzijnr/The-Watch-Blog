@@ -6,13 +6,14 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm
 from .models import   Post, User,NeighbourHood,Business,Profile
 from .forms import  NeighbourHoodForm,PostForm,UpdateProfileForm,BusinessForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def loginPage(request):
     page = 'login'
 
     if request.user.is_authenticated:
-        return redirect('homepage')
+        return redirect('hoods')
 
 
     if request.method == 'POST':
@@ -28,7 +29,7 @@ def loginPage(request):
 
         if user is not None:
             login(request, user)
-            return redirect('homepage')
+            return redirect('hoods')
         else:
             messages.error(request, 'username or password does not exist')
 
@@ -39,7 +40,7 @@ def loginPage(request):
 
 def logoutUser(request):
     logout(request)
-    return redirect('homepage')
+    return redirect('hoods')
 
 def registerUser(request):
     page = 'register'
@@ -52,7 +53,7 @@ def registerUser(request):
             user.username = user.username.lower()
             user.save()
             login(request, user)
-            return redirect('homepage')
+            return redirect('hoods')
         else:
             messages.error(request, 'An error occured during registration')
     context = {
@@ -62,20 +63,8 @@ def registerUser(request):
 
     return render(request, 'registration/login.html', context)
 
-def homepage(request):
-    pst = request.GET.get('pst') if request.GET.get('pst') != None else ''
 
-    hoods = NeighbourHood.objects.filter(pst(location__name__icontains=pst) | pst(name__icontains=pst))
-    hood_count = hoods.count()
-    posts = Post.objects.filter(pst(hood__location__name__icontains=pst))
-
-    context = {
-        'hoods':hoods,
-        'hood_count':hood_count, 
-        'posts':posts
-    }
-    return render(request, 'home.html', context)
-
+@login_required(login_url='login')
 def create_hood(request):
     """View functionality for creating a new neighbourhood"""
     if request.method == 'POST':
@@ -84,12 +73,13 @@ def create_hood(request):
             hood = form.save(commit=False)
             hood.admin = request.user.profile
             hood.save()
-            return redirect('hood')   
+            return redirect('hoods')   
 
     else:
         form = NeighbourHoodForm()
     return render(request, 'newhood.html', {'form': form})
 
+@login_required(login_url='login')
 def create_post(request, hood_id):
     """View functionality for creating a news post"""
     hood = NeighbourHood.objects.get(id=hood_id)
@@ -105,10 +95,12 @@ def create_post(request, hood_id):
         form = PostForm()
     return render(request, 'post.html', {'form': form})
 
+@login_required(login_url='login')
 def profile(request, username):
     """View functionality for user profile"""
     return render(request, 'profile.html')   
 
+@login_required(login_url='login')
 def edit_profile(request, username):
     """View functionality for editing user profile"""
     user = User.objects.get(username=username)
@@ -130,20 +122,23 @@ def hoods(request):
     }
     return render(request, 'home.html', params)
 
+@login_required(login_url='login')
 def join_hood(request, id):
     """View functionality for joining a new hood"""
     neighbourhood = get_object_or_404(NeighbourHood, id=id)
     request.user.profile.neighbourhood = neighbourhood
     request.user.profile.save()
-    return redirect('hood')
+    return redirect('hoods')
 
+@login_required(login_url='login')
 def leave_hood(request, id):
     """Functionality for exiting a hood you had joined"""
     hood = get_object_or_404(NeighbourHood, id=id)
     request.user.profile.neighbourhood = None
     request.user.profile.save()
-    return redirect('hood')   
+    return redirect('hoods')   
 
+@login_required(login_url='login')
 def search_business(request):
     """Functionality for searching for a bussiness by a specific name"""
     if request.method == 'GET':
@@ -160,6 +155,7 @@ def search_business(request):
         message = "You haven't searched for any image category"
     return render(request, "search.html")         
 
+@login_required(login_url='login')
 def single_hood(request, hood_id):
     """Functionality for getting a single hood"""
     hood = NeighbourHood.objects.get(id=hood_id)
@@ -184,8 +180,24 @@ def single_hood(request, hood_id):
     }
     return render(request, 'hood.html', params)     
 
+@login_required(login_url='login')
 def hood_members(request, hood_id):
     """Function for getting all hood members"""
     hood = NeighbourHood.objects.get(id=hood_id)
     members = Profile.objects.filter(neighbourhood=hood)
     return render(request, 'members.html', {'members': members}) 
+
+@login_required(login_url='login')
+def createBusiness(request):
+    """View functionality for creating a new neighbourhood"""
+    if request.method == 'POST':
+        form = BusinessForm(request.POST, request.FILES)
+        if form.is_valid():
+            business = form.save(commit=False)
+            business.admin = request.user.profile
+            business.save()
+            return redirect('hoods')   
+
+    else:
+        form = BusinessForm()
+    return render(request, 'new_business.html', {'form': form})

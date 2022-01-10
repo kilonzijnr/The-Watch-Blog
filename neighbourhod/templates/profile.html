@@ -4,8 +4,19 @@
 <div class="container ">
     <div class="row">
         <div class="col-md-3"></div>
+        <div class="profile-photo"style="margin-right: 50px;">
+            {% if profile.photo %}
+            <img
+              src="{{profile.photo.url}}"
+              alt=""
+              class="card-img-top"
+              style="width: 200px; height: 200px; border-radius: 50%"
+            />
+            {%else%}
+            <img class="img-responsive" src="https://img.icons8.com/color/2x/user-male-circle--v2.gif" alt="">
+            {% endif %}
+          </div>
         <div class="col-md-6 mt-4 bg-white prof mr-2 ml-2">
-            <img class="rounded-circle account-img d-block mx-auto" src="{{ user.profile.profile_picture.url }}"height="125px" width="125px">
             <h5 class="text-center mt-3">{{user.username}}</h5>
             <p class="text-center"> {{user.email}}</p>
             {% if request.user.profile.neighbourhood %}

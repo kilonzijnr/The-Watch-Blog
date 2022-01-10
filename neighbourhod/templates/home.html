@@ -2,15 +2,23 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
-        <a href="" class="btn btn-sm btn-info mb-2"> New Hood</a>
+    <h1 style="font-family: 'Calistoga', cursive;color:white; text-align: center;">THE WATCH BLOG</h1><br>
+    {% if request.user.profile.neighbourhood %}
+            <p class="text-center" style="color: white;"><b>Current Neighbourhood: </b><a class="btn btn-sm btn-danger" href="{% url 'single-hood' user.profile.neighbourhood.id %}">{{ user.profile.neighbourhood.name }}</a>
+            </p>
+            {% endif %}
     <div class="row">
         {% for hood in all_hoods %}
         <div class="col-md-4">
             <div class="card mb-4" style="min-height:340px">
-                <img src="{{ hood.hood_logo.url }}" class="card-img-top" alt="{{ hood.name }}">
+                <img src="{{ hood.logo.url }}" class="card-img-top" alt="" style="width: 200px; height: 200px; border-radius: 50%">
                 <div class="card-body">
-                    <h5 class="card-title">{{ hood.name }}  ({{hood.location}}) <span class="ml-4">{{hood.members.count}} member{{hood.members.count|pluralize}}</span></h5>
-                    <p class="card-text">{{hood.description}}</p>
+                    <h5 class="card-title"> Neighborhood:  <small>{{ hood.name }} </small> <span class="ml-4"></span></h5><hr>
+                    <h5>Census:  <small>{{hood.members.count}} member{{hood.members.count|pluralize}}</small></h5><hr>
+                    <h5>Location:  <small>{{hood.location}}</small></h5><hr>
+                    <h5>Description:  <small>{{hood.description}}</small></h5><hr>
+                    <br><br>
+                    
                     {% if request.user.profile.neighbourhood == hood %}
                     <a href="{% url 'leave-hood' hood.id %}" class="btn btn-outline-danger btn-sm">Leave Hood</a>
                     {% elif not request.user.profile.neighbourhood %}

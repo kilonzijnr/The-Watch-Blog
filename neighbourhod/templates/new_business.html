@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block content %} 
+
+<div class="form-wrapper my-3">
+    <h3>create business</h3>
+    <form action="" method='post'>
+        {% csrf_token %}  
+        {% bootstrap_form form %}        
+        <!-- {{ form.as_p }} -->
+        <input type="submit" value="create business" class="create-btn">
+    </form>   
+</div>
+
+{% endblock %}
