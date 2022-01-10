@@ -128,7 +128,7 @@ def hoods(request):
     params = {
         'all_hoods': all_hoods,
     }
-    return render(request, 'all_hoods.html', params)
+    return render(request, 'home.html', params)
 
 def join_hood(request, id):
     """View functionality for joining a new hood"""

@@ -3,7 +3,7 @@ from . import views
 
 #urls below
 urlpatterns = [
-    path('', views.single_hood, name='hood'),
+    path('', views.hoods, name='hood'),
     path('register/', views.registerUser, name='signup'),
     path('account/', include('django.contrib.auth.urls')),
 ]
