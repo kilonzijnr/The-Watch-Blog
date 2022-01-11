@@ -41,4 +41,4 @@ This application has being a personal undertaken project from scratch.
 If you want to contact me you can reach me at vkilonzi05@gmail.com.
 
 # License
-This project uses an [MIT] License(https://github.com/kilonzijnr/The-Watch-Blog/blob/master/License).
+This project uses an [MIT] License:(https://github.com/kilonzijnr/The-Watch-Blog/blob/master/License).
